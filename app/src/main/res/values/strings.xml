@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Capstone</string>
+    <string name="usernameHint">Username</string>
+    <string name="passwordHint">Password</string>
+    <string name="submitButtonText">Submit</string>
+    <string name="uploadButtonText">Upload</string>
+    <string name="projectLogoDescription">project logo</string>
+    <string name="dashboardButtonText">Dashboard</string>
+</resources>

@@ -9,7 +9,7 @@ import java.net.Socket;
 public class Connection extends Thread{
 
     private static final int port = 50000;
-    private static final String address = "192.168.0.1";
+    private static final String address = "10.12.229.121";
     private Socket s;
     private PrintWriter pw;
     private BufferedReader br;

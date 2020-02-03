@@ -18,8 +18,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        c = new Connection();
-        c.start();
+        //c = new Connection();
+        //c.start();
 //        setStatusText("Authenticating...");
 
         setSubmitButton();
@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
                 setStatusText("Authenticating...");
                 EditText username = findViewById(R.id.usernameText);
                 EditText password = findViewById(R.id.passwordText);
-                Connection.setUserInput("{Username:" + username.getText() + "}{Password:" + password.getText()+ "}");
+                //Connection.setUserInput("{Username:" + username.getText() + "}{Password:" + password.getText()+ "}");
 
 //                while(!Connection.hasNewResponse());
 //                System.out.println(Connection.getServerResponse());

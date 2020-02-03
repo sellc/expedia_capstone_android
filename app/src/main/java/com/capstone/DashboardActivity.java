@@ -2,9 +2,14 @@ package com.capstone;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.loader.content.CursorLoader;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,12 +37,39 @@ public class DashboardActivity extends AppCompatActivity {
     String imagePath;
     ImageView imageView;
 
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        buttonChooseFile = findViewById(R.id.buttonChooseFile);
+        buttonUpload = findViewById(R.id.uploadImageButton);
         fileService = APIUtils.getFileService();
+
+        buttonUpload.setEnabled(false);
+
+        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            buttonChooseFile.setEnabled(false);
+            Toast.makeText(this, "Permissions not granted", Toast.LENGTH_LONG).show();
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        } else {
+            buttonChooseFile.setEnabled(true);
+        }
 
         setButtonCaptureImage();
         setButtonChooseFile();
@@ -61,43 +93,58 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void setButtonChooseFile(){
-        buttonChooseFile = findViewById(R.id.buttonChooseFile);
+//        buttonChooseFile = findViewById(R.id.buttonChooseFile);
         buttonChooseFile.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
                 startActivityForResult(intent, 0);
-                setImageOnPage();
+                //setImageOnPage();   //doesn't work
+
+                buttonUpload.setEnabled(true);
             }
         });
     }
 
+    // Upload image
     private void setButtonUpload(){
-        buttonUpload = findViewById(R.id.uploadImageButton);
+//        buttonUpload = findViewById(R.id.uploadImageButton);
         buttonUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 File file = new File(imagePath);
                 RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+                MultipartBody.Part body = MultipartBody.Part.createFormData("myFile", file.getName(), requestBody);
 
                 Call<FileInfo> call = fileService.upload(body);
                 call.enqueue(new Callback<FileInfo>() {
                     @Override
                     public void onResponse(Call<FileInfo> call, Response<FileInfo> response) {
                         if(response.isSuccessful()){
-                            Toast.makeText(DashboardActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
+                            String message = response.toString();
+                            System.out.println( "*************************************Upload Successful: " + message);
                         }
                     }
 
                     @Override
                     public void onFailure(Call<FileInfo> call, Throwable t) {
-                        Toast.makeText(DashboardActivity.this, "ERROR: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        System.out.println("ERROR: " + t.getMessage());
                     }
                 });
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 0) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                buttonChooseFile.setEnabled(true);
+                buttonUpload.setEnabled(true);
+            }
+        }
     }
 
     @Override

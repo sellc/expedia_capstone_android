@@ -1,8 +1,9 @@
+package com.capstone.TCP_Client;
 
 public class GETRequest extends Request {
 
-	public GETRequest(int port, String path, String data, String host) {
-		super(port, path, data, host);
+	public GETRequest(String path, String data, String host) {
+		super(path, data, host);
 	}
 
 	public void createRequest() {

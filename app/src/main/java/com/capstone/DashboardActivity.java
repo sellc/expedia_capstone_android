@@ -52,7 +52,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         buttonChooseFile = findViewById(R.id.buttonChooseFile);
         buttonUpload = findViewById(R.id.uploadImageButton);
-        fileService = APIUtils.getFileService();
+//        fileService = APIUtils.getFileService();
 
         buttonUpload.setEnabled(false);
 

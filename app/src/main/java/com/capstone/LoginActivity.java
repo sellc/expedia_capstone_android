@@ -5,22 +5,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.capstone.TCP_Client.RequestActions;
 
 public class LoginActivity extends AppCompatActivity {
 
-    Connection c;
+    RequestActions ra;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //c = new Connection();
-        //c.start();
-//        setStatusText("Authenticating...");
+        ra = new RequestActions(this);
+        ra.start();
 
         setSubmitButton();
     }
@@ -30,33 +34,24 @@ public class LoginActivity extends AppCompatActivity {
         launchDashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setStatusText("Authenticating...");
-                EditText username = findViewById(R.id.usernameText);
-                EditText password = findViewById(R.id.passwordText);
-                //Connection.setUserInput("{Username:" + username.getText() + "}{Password:" + password.getText()+ "}");
-
-//                while(!Connection.hasNewResponse());
-//                System.out.println(Connection.getServerResponse());
-
-
-//                if(Connection.getServerResponse().equals("1")){
-//                    setStatusText("Login Successful");
-                    goToDashboard();
-//                } else {
-//                    setStatusText("Invalid Credentials");
-//                }
+                ra.login(getUsername(), getPassword());
             }
         });
     }
 
-    private void goToDashboard(){
-        setStatusText("");
+    private String getUsername(){
+        EditText username = findViewById(R.id.usernameText);
+        return String.valueOf(username.getText());
+    }
+
+    private String getPassword(){
+        EditText password = findViewById(R.id.passwordText);
+        return String.valueOf(password.getText());
+    }
+
+    public void goToDashboard(){
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
 
-    private void setStatusText(String status){
-        TextView statusText = findViewById(R.id.statusTextView);
-        statusText.setText(status);
-    }
 }

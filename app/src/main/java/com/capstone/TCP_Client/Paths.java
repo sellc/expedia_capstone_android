@@ -2,18 +2,23 @@ package com.capstone.TCP_Client;
 
 public class Paths {
 
+    // This file stores all paths and establish
+    // one central location for all path information.
+
+    public static String getBase() { return "/api/v1/"; }
+
     public static String getEntriesPath() {
-        return "/api/v1/";
+        return getBase();
     }
 
     public static String getLoginPath(){
-        return "/api/v1/users/login";
+        return getBase() + "users/login";
     }
 
     public static String getRegisterPath(){
-        return "/api/v1/users/register";
+        return getBase() + "users/register";
     }
 
-    public static String getClassifyPath() { return "/api/v1/classify"; }
+    public static String getClassifyPath() { return getBase() + "classify"; }
 
 }

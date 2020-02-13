@@ -6,6 +6,7 @@ public class GETRequest extends Request {
 		super(path, data, host);
 	}
 
+	//Create a GET request with the specified header information
 	public void createRequest() {
 		request = "GET " + path + "?" + data + " HTTP/1.0\r\n" + "Accept: */*\r\n" + "Host: " + host + "\r\n"
 				+ "Connection: close\r\n\r\n";

@@ -3,3 +3,11 @@ local.properties
 .DS_Store
 *.
 app/src/main/java/com/capstone/TCP_Client/Credentials.java
+.gradle/5.4.1/executionHistory/executionHistory.bin
+.gradle/5.4.1/executionHistory/executionHistory.lock
+.gradle/5.4.1/fileHashes/fileHashes.bin
+.gradle/5.4.1/fileHashes/fileHashes.lock
+.gradle/5.4.1/javaCompile/classAnalysis.bin
+.gradle/5.4.1/javaCompile/javaCompile.lock
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+app/src/main/java/com/capstone/TCP_Client/Credentials.java

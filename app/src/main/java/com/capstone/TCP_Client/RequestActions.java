@@ -35,10 +35,13 @@ public class RequestActions extends Thread {
 				in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 				out.write(queue.poll().getRequest().getBytes());
 				out.flush();
-				while ((response = in.readLine()) != null) {
-					getToken(response);
-					System.out.println(response);
+				String line;
+				while ((line = in.readLine()) != null) {
+					response += line;
 				}
+				System.out.println(response);
+//				response.replaceAll("\n")
+				checkForToken(response);
 				in.close();
 				out.close();
 				socket.close();
@@ -64,12 +67,16 @@ public class RequestActions extends Thread {
 		queue.add(new POSTRequest(Paths.getClassifyPath(), "token="+token+"&", credentials.getHost()));
 	}
 
-	private void getToken(String input){
+	private void checkForToken(String input){
 		if(input.contains("token")){
 			token = input.substring(input.indexOf("Bearer")+7, input.length()-2);
 //			System.out.println("*******TOKEN****" + token);
 			parent.goToDashboard();
+		} else {
+			parent.invalidCredentials();
 		}
 	}
+
+
 
 }

@@ -3,6 +3,7 @@ package com.capstone;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -34,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
         launchDashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TextView statusText = findViewById(R.id.statusText);
+                statusText.setText("Authenticating...");
                 ra.login(getUsername(), getPassword());
             }
         });
@@ -47,6 +50,19 @@ public class LoginActivity extends AppCompatActivity {
     private String getPassword(){
         EditText password = findViewById(R.id.passwordText);
         return String.valueOf(password.getText());
+    }
+
+    public void invalidCredentials(){
+        TextView usernameColon = findViewById(R.id.usernameColon);
+        TextView passwordColon = findViewById(R.id.passwordColon);
+        usernameColon.setTextColor(Color.RED);
+        passwordColon.setTextColor(Color.RED);
+//        setStatus("Invalid Credentials");
+    }
+    private void setStatus(String status){
+        TextView statusText = findViewById(R.id.statusText);
+        statusText.setTextColor(Color.RED);
+        statusText.setText(status);
     }
 
     public void goToDashboard(){

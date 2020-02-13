@@ -33,6 +33,16 @@ public class Login extends AppCompatActivity {
         setSubmitButton();
     }
 
+    private void setRegisterButton(){
+        Button registerButton = findViewById(R.id.registerButton);
+        registerButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                goToRegistration();
+            }
+        });
+    }
+
     private void setSubmitButton(){
         Button launchDashboard = findViewById(R.id.submitButton);
         launchDashboard.setOnClickListener(new View.OnClickListener() {
@@ -64,8 +74,13 @@ public class Login extends AppCompatActivity {
         statusText.setText(status);
     }
 
-    public void goToDashboard(){
+    private void goToDashboard(){
         Intent intent = new Intent(this, DashboardActivity.class);
+        startActivity(intent);
+    }
+
+    private void goToRegistration(){
+        Intent intent = new Intent(this, Register.class);
         startActivity(intent);
     }
 

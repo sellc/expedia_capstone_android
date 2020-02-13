@@ -2,18 +2,21 @@ package com.capstone.TCP_Client;
 
 public class Credentials {
 
+    static String token;
+
     // Hostname - 192.168.0.1 or (localhost)
-    private String host = "";
-
-    // Port - 80 & 443 (common)
-    private int port = 0;
-
-    public String getHost(){
-        return host;
+    public static String getHost(){
+        return "";
     }
 
-    public int getPort(){
-        return port;
+    // Port - 80 & 443 (common)
+    public static int getPort(){
+        return 0;
+    }
+
+    // Set the session token
+    public static void setToken(String newToken){
+        token = newToken;
     }
 
 }

@@ -8,4 +8,5 @@
     <string name="uploadButtonText">Upload</string>
     <string name="projectLogoDescription">project logo</string>
     <string name="dashboardButtonText">Dashboard</string>
+    <string name="registerText">Register</string>
 </resources>

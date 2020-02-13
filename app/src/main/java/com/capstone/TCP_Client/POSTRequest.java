@@ -12,12 +12,4 @@ public class POSTRequest extends Request {
 				+ "\r\n\r\n" + data;
 	}
 
-//	public void createMultipartRequest(){
-//		String boundary = "*****" + Long.toString(System.currentTimeMillis()) + "*****";
-//
-//		request = "POST " + path + " HTTP/1.1\r\n" + "Accept: */*\r\n" + "Host: " + host + "\r\n"
-//				+ "Content-Type: multipart/form-data\r\n" + "Content-Length: " + data.length()
-//				+ "\r\n\r\n" + data;
-//	}
-
 }

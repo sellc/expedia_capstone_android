@@ -14,6 +14,6 @@ public class Paths {
         return "/api/v1/users/register";
     }
 
-    public static String getClassifyPath() { return "/api/v1/users/register"; }
+    public static String getClassifyPath() { return "/api/v1/classify"; }
 
 }

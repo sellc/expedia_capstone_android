@@ -31,6 +31,7 @@ public class Login extends AppCompatActivity {
         ra.start();
 
         setSubmitButton();
+        setRegisterButton();
     }
 
     private void setRegisterButton(){

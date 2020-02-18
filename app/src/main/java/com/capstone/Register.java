@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.capstone.TCP_Client.Credentials;
@@ -26,14 +27,27 @@ public class Register extends AppCompatActivity {
         ra = new RequestActions();
         ra.start();
 
+        ProgressBar spinner = findViewById(R.id.registerProgressBar);
+        spinner.setVisibility(View.INVISIBLE);
+
         setBackButton();
+        setRegisterButton();
     }
 
     private void setRegisterButton(){
-        Button register = findViewById(R.id.registerButton);
+        Button register = findViewById(R.id.submitButton);
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setStatus("Creating Account...");
+                        ProgressBar spinner = findViewById(R.id.registerProgressBar);
+                        spinner.setVisibility(View.VISIBLE);
+                        spinner.setIndeterminate(true);
+                    }
+                });
                 register();
             }
         });
@@ -55,7 +69,7 @@ public class Register extends AppCompatActivity {
     }
 
     public void register() {
-        ra.addPOSTToQueue(Paths.getLoginPath(), "username="+getUsername()+"&password="+getPassword());
+        ra.addPOSTToQueue(Paths.getRegisterPath(), "username="+getUsername()+"&password="+getPassword());
         Thread check = new Thread(){
             @Override
             public void run() {
@@ -78,9 +92,42 @@ public class Register extends AppCompatActivity {
 
     private void checkForToken(){
         String response = ra.getResponse();
-        if(response.contains("token")){
-            Credentials.setToken(response.substring(response.indexOf("Bearer"), response.length()-2));
-            goToDashboard();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ProgressBar spinner = findViewById(R.id.registerProgressBar);
+                spinner.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        System.out.println(response);
+
+        if(response.contains("200")){
+            ra.addPOSTToQueue(Paths.getLoginPath(), "username="+getUsername()+"&password="+getPassword());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setStatus("Success! Logging In...");
+                    ProgressBar spinner = findViewById(R.id.registerProgressBar);
+                    spinner.setVisibility(View.VISIBLE);
+                }
+            });
+            response = ra.getResponse();
+            if(response.contains("token")) {
+                Credentials.setToken(response.substring(response.indexOf("Bearer"), response.length() - 2));
+                goToDashboard();
+            }
+        } else if(response.contains("Username taken")) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TextView usernameColon = findViewById(R.id.usernameColon);
+                    TextView passwordColon = findViewById(R.id.passwordColon);
+                    usernameColon.setTextColor(Color.RED);
+                    passwordColon.setTextColor(Color.RED);
+                    setStatus("Username Taken");
+                }
+            });
         } else {
             runOnUiThread(new Runnable() {
                 @Override
@@ -98,6 +145,18 @@ public class Register extends AppCompatActivity {
     private void setStatus(String status){
         TextView statusText = findViewById(R.id.statusText);
         statusText.setText(status);
+    }
+
+    public void login() {
+        ra.addPOSTToQueue(Paths.getLoginPath(), "username="+getUsername()+"&password="+getPassword());
+        Thread check = new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                checkForToken();
+            }
+        };
+        check.start();
     }
 
 }

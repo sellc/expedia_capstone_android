@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -51,7 +52,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         buttonChooseFile = findViewById(R.id.buttonChooseFile);
         buttonUpload = findViewById(R.id.uploadImageButton);
-//        fileService = APIUtils.getFileService();
+        fileService = APIUtils.getFileService();
 
         buttonUpload.setEnabled(false);
 
@@ -103,7 +104,6 @@ public class DashboardActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
                 startActivityForResult(intent, 0);
-                //setImageOnPage();   //doesn't work
 
                 buttonUpload.setEnabled(true);
             }
@@ -122,7 +122,7 @@ public class DashboardActivity extends AppCompatActivity {
                 RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                 //RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), file);
                 MultipartBody.Part body = MultipartBody.Part.createFormData("myFile", file.getName(), requestBody);
-                System.out.println(body.toString());
+                System.out.println(body);
 
                 Call<FileInfo> call = fileService.upload(body);
                 call.enqueue(new Callback<FileInfo>() {
@@ -158,13 +158,21 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (data == null) {
-                Toast.makeText(this, "Unable to choose image.", Toast.LENGTH_SHORT).show();
-                return;
-            }
+
+        if (resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri imageUri = data.getData();
             imagePath = getReadPathFromUri(imageUri);
+
+            //Display selected image on page
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                ImageView imageView = findViewById(R.id.capturedImage);
+                imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(this, "Unable to choose image.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -177,13 +185,6 @@ public class DashboardActivity extends AppCompatActivity {
         String result = cursor.getString(column_index);
         cursor.close();
         return result;
-    }
-
-    private void setImageOnPage(){
-        ImageView myImageView = findViewById(R.id.capturedImage);
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        Bitmap myBitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
-        myImageView.setImageBitmap(myBitmap);
     }
 
 }

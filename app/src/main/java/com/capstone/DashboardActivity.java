@@ -51,7 +51,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         buttonChooseFile = findViewById(R.id.buttonChooseFile);
         buttonUpload = findViewById(R.id.uploadImageButton);
-        fileService = APIUtils.getFileService();
+//        fileService = APIUtils.getFileService();
 
         buttonUpload.setEnabled(false);
 
@@ -76,6 +76,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     }
 
+    //
     private void setButtonCaptureImage(){
         Button captureImage = findViewById(R.id.captureImageButton);
         imageView = findViewById(R.id.capturedImage);
@@ -93,6 +94,7 @@ public class DashboardActivity extends AppCompatActivity {
         //TODO: access the new image file path
     }
 
+    // Set choose file button.
     private void setButtonChooseFile(){
 //        buttonChooseFile = findViewById(R.id.buttonChooseFile);
         buttonChooseFile.setOnClickListener(new View.OnClickListener(){
@@ -108,10 +110,11 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    // Upload image
+    // Set upload button.
     private void setButtonUpload(){
-//        buttonUpload = findViewById(R.id.uploadImageButton);
+        buttonUpload = findViewById(R.id.uploadImageButton);
         //TODO: handle situation where button is clicked but no image has been selected
+
         buttonUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

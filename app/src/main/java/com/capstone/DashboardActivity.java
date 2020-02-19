@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat;
 import androidx.loader.content.CursorLoader;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -90,6 +89,8 @@ public class DashboardActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //TODO: access the new image file path
     }
 
     private void setButtonChooseFile(){
@@ -110,20 +111,25 @@ public class DashboardActivity extends AppCompatActivity {
     // Upload image
     private void setButtonUpload(){
 //        buttonUpload = findViewById(R.id.uploadImageButton);
+        //TODO: handle situation where button is clicked but no image has been selected
         buttonUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 File file = new File(imagePath);
                 RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                //RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), file);
                 MultipartBody.Part body = MultipartBody.Part.createFormData("myFile", file.getName(), requestBody);
+                System.out.println(body.toString());
 
                 Call<FileInfo> call = fileService.upload(body);
                 call.enqueue(new Callback<FileInfo>() {
                     @Override
                     public void onResponse(Call<FileInfo> call, Response<FileInfo> response) {
-                        if(response.isSuccessful()){
-                            String message = response.toString();
+                        String message = response.raw().toString();
+                        if (response.isSuccessful()) {
                             System.out.println( "*************************************Upload Successful: " + message);
+                        } else {
+                            System.out.println("*************************??: " + message);
                         }
                     }
 
@@ -136,13 +142,12 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
+    // Check this method
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == 0) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 buttonChooseFile.setEnabled(true);
-                buttonUpload.setEnabled(true);
             }
         }
     }
@@ -150,7 +155,7 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
             if (data == null) {
                 Toast.makeText(this, "Unable to choose image.", Toast.LENGTH_SHORT).show();
                 return;

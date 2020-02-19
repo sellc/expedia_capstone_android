@@ -7,6 +7,36 @@
     android:background="@android:color/black"
     tools:context=".Login">
 
+    <ImageView
+        android:id="@+id/expediaLaunchLogo"
+        android:layout_width="380dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:contentDescription="@string/projectLogoDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/amenityLaunchLogo"
+        app:srcCompat="@mipmap/expedia_project_logo" />
+
+    <ImageView
+        android:id="@+id/amenityLaunchLogo"
+        android:layout_width="380dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:contentDescription="@string/projectLogoDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/amenity_detector_logo" />
+
     <EditText
         android:id="@+id/usernameText"
         android:layout_width="wrap_content"
@@ -59,36 +89,6 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordText" />
-
-    <ImageView
-        android:id="@+id/amenityLaunchLogo"
-        android:layout_width="380dp"
-        android:layout_height="120dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:contentDescription="@string/projectLogoDescription"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/amenity_detector_logo" />
-
-    <ImageView
-        android:id="@+id/expediaLaunchLogo"
-        android:layout_width="380dp"
-        android:layout_height="120dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:contentDescription="@string/projectLogoDescription"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/amenityLaunchLogo"
-        app:srcCompat="@mipmap/expedia_project_logo" />
 
     <TextView
         android:id="@+id/usernameColon"

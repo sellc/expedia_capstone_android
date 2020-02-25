@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat;
 import androidx.loader.content.CursorLoader;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -19,6 +18,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -36,6 +36,7 @@ public class DashboardActivity extends AppCompatActivity {
     Button buttonChooseFile, buttonUpload;
     String imagePath;
     ImageView imageView;
+    private int state = 0;
 
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -50,7 +51,7 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        buttonChooseFile = findViewById(R.id.buttonChooseFile);
+        buttonChooseFile = findViewById(R.id.chooseImageButton);
         buttonUpload = findViewById(R.id.uploadImageButton);
 //        fileService = APIUtils.getFileService();
 
@@ -74,8 +75,11 @@ public class DashboardActivity extends AppCompatActivity {
         setButtonCaptureImage();
         setButtonChooseFile();
         setButtonUpload();
-
+        setDashboardImage();
+        setCameraImage();
     }
+
+
 
     //
     private void setButtonCaptureImage(){
@@ -177,6 +181,58 @@ public class DashboardActivity extends AppCompatActivity {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         Bitmap myBitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
         myImageView.setImageBitmap(myBitmap);
+    }
+
+    private void setDashboardImage(){
+        ImageView dashboardImage = findViewById(R.id.dashboardImageView);
+        dashboardImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                state = 0;
+                updateGUIState();
+            }
+        });
+    }
+
+    private void setCameraImage(){
+        ImageView cameraImage = findViewById(R.id.cameraImageView);
+        cameraImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                state = 1;
+                updateGUIState();
+            }
+        });
+    }
+
+    private void updateGUIState(){
+        runOnUiThread(new Runnable() {
+
+            public void run(){
+                Button captureImageButton = findViewById(R.id.captureImageButton);
+                Button chooseImageButton = findViewById(R.id.chooseImageButton);
+                Button uploadImageButton = findViewById(R.id.uploadImageButton);
+                ScrollView entriesScrollView = findViewById(R.id.entriesScrollView);
+
+                switch(state) {
+                    case 0: //Dashboard Clicked
+                        captureImageButton.setVisibility(View.INVISIBLE);
+                        chooseImageButton.setVisibility(View.INVISIBLE);
+                        uploadImageButton.setVisibility(View.INVISIBLE);
+                        entriesScrollView.setVisibility(View.VISIBLE);
+                        break;
+                    case 1: //Camera Clicked
+                        captureImageButton.setVisibility(View.VISIBLE);
+                        chooseImageButton.setVisibility(View.VISIBLE);
+                        uploadImageButton.setVisibility(View.VISIBLE);
+                        entriesScrollView.setVisibility(View.INVISIBLE);
+                        break;
+                    default:
+
+                }
+
+            }
+        });
     }
 
 }

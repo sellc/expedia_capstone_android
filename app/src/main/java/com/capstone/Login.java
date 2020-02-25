@@ -138,7 +138,6 @@ public class Login extends AppCompatActivity {
     //Check for a response from the server
     private void checkForResponse(){
         String response = ra.getResponse(); //Wait for a response. This is a blocking call in RequestActions thread
-        System.out.println("RESONSE***********" + response);
         if(response.contains("_id")){   //Registration was successful
             ra.addPOSTToQueue(Paths.getLoginPath(), "username="+getUsername()+"&password="+getPassword());
             state = 4;

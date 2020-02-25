@@ -3,10 +3,9 @@
     <string name="usernameHint">Username</string>
     <string name="passwordHint">Password</string>
     <string name="loginButtonText">Login</string>
-    <string name="registerButtonText">Register</string>
+    <string name="registerButtonText">Need an Account?</string>
     <string name="submitButtonText">Submit</string>
     <string name="uploadButtonText">Upload</string>
     <string name="projectLogoDescription">project logo</string>
     <string name="dashboardButtonText">Dashboard</string>
-    <string name="registerText">Register</string>
 </resources>

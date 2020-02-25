@@ -7,6 +7,24 @@
     android:background="@android:color/black"
     tools:context=".Login">
 
+    <ProgressBar
+        android:id="@+id/registerProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:indeterminate="true"
+        android:indeterminateOnly="true"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/statusText" />
+
     <ImageView
         android:id="@+id/expediaLaunchLogo"
         android:layout_width="380dp"
@@ -28,7 +46,7 @@
         android:layout_height="120dp"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
         android:contentDescription="@string/projectLogoDescription"
@@ -40,10 +58,10 @@
     <EditText
         android:id="@+id/usernameText"
         android:layout_width="wrap_content"
-        android:layout_height="60sp"
+        android:layout_height="40sp"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:ems="10"
@@ -59,10 +77,10 @@
     <EditText
         android:id="@+id/passwordText"
         android:layout_width="wrap_content"
-        android:layout_height="60sp"
+        android:layout_height="40sp"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:ems="10"
@@ -81,7 +99,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:text="@string/loginButtonText"
@@ -93,26 +111,26 @@
     <TextView
         android:id="@+id/usernameColon"
         android:layout_width="wrap_content"
-        android:layout_height="60sp"
-        android:layout_marginTop="20dp"
+        android:layout_height="40sp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text=":"
         android:textColor="@android:color/white"
-        android:textSize="40sp"
+        android:textSize="30sp"
         app:layout_constraintEnd_toStartOf="@+id/usernameText"
         app:layout_constraintTop_toBottomOf="@+id/expediaLaunchLogo" />
 
     <TextView
         android:id="@+id/passwordColon"
         android:layout_width="wrap_content"
-        android:layout_height="60sp"
-        android:layout_marginTop="20dp"
+        android:layout_height="40sp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text=":"
         android:textColor="@android:color/white"
-        android:textSize="40sp"
+        android:textSize="30sp"
         app:layout_constraintEnd_toStartOf="@+id/passwordText"
         app:layout_constraintTop_toBottomOf="@+id/usernameColon" />
 
@@ -122,7 +140,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:textColor="@android:color/background_light"
@@ -137,13 +155,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="160dp"
         android:layout_marginLeft="160dp"
-        android:layout_marginTop="66dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="160dp"
         android:layout_marginRight="160dp"
-        android:text="@string/registerText"
+        android:text="@string/registerButtonText"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/submitButton" />
+        app:layout_constraintTop_toBottomOf="@+id/registerProgressBar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

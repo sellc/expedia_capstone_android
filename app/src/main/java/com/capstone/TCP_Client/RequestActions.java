@@ -19,20 +19,22 @@ public class RequestActions extends Thread {
 			if (!queue.isEmpty()) {
 				try {
 					Socket socket = new Socket(Credentials.getHost(), Credentials.getPort());
-					OutputStream out = socket.getOutputStream();
-					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
-					out.write(queue.poll().getRequest().getBytes());
-					out.flush();
-					done = false;
-					String line;
-					response="";
-					while ((line = in.readLine()) != null) {
-						response += line;
+					if(socket != null) {
+						OutputStream out = socket.getOutputStream();
+						BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
+						out.write(queue.poll().getRequest().getBytes());
+						out.flush();
+						done = false;
+						String line;
+						response = "";
+						while ((line = in.readLine()) != null) {
+							response += line;
+						}
+						done = true;
+						in.close();
+						out.close();
+						socket.close();
 					}
-					done = true;
-					in.close();
-					out.close();
-					socket.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

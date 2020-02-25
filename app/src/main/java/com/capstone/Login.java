@@ -20,6 +20,7 @@ import com.capstone.TCP_Client.RequestActions;
 
 public class Login extends AppCompatActivity {
 
+    //Used to send GET and POST requests using sockets
     RequestActions ra;
 
     @Override
@@ -30,6 +31,7 @@ public class Login extends AppCompatActivity {
         ra = new RequestActions();
         ra.start();
 
+<<<<<<< HEAD
         setSubmitButton();
         setRegisterButton();
     }
@@ -42,51 +44,72 @@ public class Login extends AppCompatActivity {
                 goToRegistration();
             }
         });
+=======
+        setLoginButton();
+>>>>>>> master
     }
 
-    private void setSubmitButton(){
+    //Set the login button. Specifically implement the onClick functionality
+    private void setLoginButton(){
         Button launchDashboard = findViewById(R.id.submitButton);
         launchDashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //Calls the UI thread for an update
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         setStatus("Authenticating...");
                     }
                 });
-                login();
+
+                login();    //Creates and sends the request
             }
         });
     }
 
+    //Get the text from the username field
     private String getUsername(){
         EditText username = findViewById(R.id.usernameText);
         return String.valueOf(username.getText());
     }
 
+    //Get the text from the password field
     private String getPassword(){
         EditText password = findViewById(R.id.passwordText);
         return String.valueOf(password.getText());
     }
 
+    //Set the status textView with the provided String
     private void setStatus(String status){
         TextView statusText = findViewById(R.id.statusText);
         statusText.setText(status);
     }
 
+<<<<<<< HEAD
     private void goToDashboard(){
+=======
+    //Launches the dashboard activity
+    public void goToDashboard(){
+>>>>>>> master
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
 
+<<<<<<< HEAD
     private void goToRegistration(){
         Intent intent = new Intent(this, Register.class);
         startActivity(intent);
     }
 
+=======
+    //Add a login POST request to the queue
+>>>>>>> master
     public void login() {
         ra.addPOSTToQueue(Paths.getLoginPath(), "username="+getUsername()+"&password="+getPassword());
+
+        //Create a thread to check for a token otherwise it blocks the main thread
         Thread check = new Thread(){
             @Override
             public void run() {
@@ -97,6 +120,7 @@ public class Login extends AppCompatActivity {
         check.start();
     }
 
+    //Scan the response for a token
     private void checkForToken(){
         String response = ra.getResponse();
         if(response.contains("token")){

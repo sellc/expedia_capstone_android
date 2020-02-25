@@ -40,18 +40,25 @@ public class RequestActions extends Thread {
 		}
 	}
 
+	//Add a POST request to the queue
 	public void addPOSTToQueue(String path, String data){
 		queue.add(new POSTRequest(path, data, Credentials.getHost()));
 	}
 
+	//Add a GET request to the queue
 	public void addGETToQueue(String path, String data){
 		queue.add(new GETRequest(path, data, Credentials.getHost()));
 	}
 
+	//Return the current response if it's available
+	//****************************************
+	//This should be changed to return		*
+	//the requested response otherwise		*
+	//this can be overwritten.				*
+	//****************************************
 	public String getResponse(){
-		String tempResponse = "";
 		while(!done);
-		tempResponse = response;
+		String tempResponse = response;
 		response = "";
 		done = false;
 		return tempResponse;

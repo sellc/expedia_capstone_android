@@ -6,6 +6,7 @@ public class POSTRequest extends Request {
 		super(path, data, host);
 	}
 
+	//Create a POST request with the specified header information
 	public void createRequest() {
 		request = "POST " + path + " HTTP/1.1\r\n" + "Accept: */*\r\n" + "Host: " + host + "\r\n"
 				+ "Content-Type: application/x-www-form-urlencoded\r\n" + "Content-Length: " + data.length()

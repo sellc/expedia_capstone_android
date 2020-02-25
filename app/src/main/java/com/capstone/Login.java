@@ -31,7 +31,22 @@ public class Login extends AppCompatActivity {
         ra = new RequestActions();
         ra.start();
 
+<<<<<<< HEAD
+        setSubmitButton();
+        setRegisterButton();
+    }
+
+    private void setRegisterButton(){
+        Button registerButton = findViewById(R.id.registerButton);
+        registerButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                goToRegistration();
+            }
+        });
+=======
         setLoginButton();
+>>>>>>> master
     }
 
     //Set the login button. Specifically implement the onClick functionality
@@ -72,13 +87,25 @@ public class Login extends AppCompatActivity {
         statusText.setText(status);
     }
 
+<<<<<<< HEAD
+    private void goToDashboard(){
+=======
     //Launches the dashboard activity
     public void goToDashboard(){
+>>>>>>> master
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
 
+<<<<<<< HEAD
+    private void goToRegistration(){
+        Intent intent = new Intent(this, Register.class);
+        startActivity(intent);
+    }
+
+=======
     //Add a login POST request to the queue
+>>>>>>> master
     public void login() {
         ra.addPOSTToQueue(Paths.getLoginPath(), "username="+getUsername()+"&password="+getPassword());
 

@@ -5,36 +5,37 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class RequestActions extends Thread {
 
-	private LinkedList<Request> queue = new LinkedList<Request>();
+	private ConcurrentLinkedQueue<Request> queue = new ConcurrentLinkedQueue<>();
 
-	private String response = "";
-	private boolean done = false;
+	private volatile String response = "";
+	private volatile boolean done = false;
 
 	public void run(){
+		Socket socket;
+		OutputStream out;
+		BufferedReader in;
 		while(true) {
 			if (!queue.isEmpty()) {
 				try {
-					Socket socket = new Socket(Credentials.getHost(), Credentials.getPort());
-					if(socket != null) {
-						OutputStream out = socket.getOutputStream();
-						BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
-						out.write(queue.poll().getRequest().getBytes());
-						out.flush();
-						done = false;
-						String line;
-						response = "";
-						while ((line = in.readLine()) != null) {
-							response += line;
-						}
-						done = true;
-						in.close();
-						out.close();
-						socket.close();
+					socket = new Socket(Credentials.getHost(), Credentials.getPort());
+					out = socket.getOutputStream();
+					in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
+					out.write(queue.poll().getRequest().getBytes());
+					out.flush();
+					done = false;
+					String line;
+					response = "";
+					while ((line = in.readLine()) != null) {
+						response += line;
 					}
+					done = true;
+					in.close();
+					out.close();
+					socket.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

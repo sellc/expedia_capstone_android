@@ -22,6 +22,14 @@ public class Login extends AppCompatActivity {
     private boolean registerState = false;
     private int state;
 
+    private final int attemptToRegister = 0;
+    private final int attemptToLogin = 1;
+    private final int invalidCredentials = 2;
+    private final int usernameTaken = 3;
+    private final int successfulRegistration = 4;
+    private final int loginOrRegisterToggleSwitch = 5;
+    private final int successfulLogin = 6;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +47,7 @@ public class Login extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                if(registerState == false) {
-                    updateState(5); // Switch to register
-                } else {
-                    updateState(6); // Switch to login
-                }
+                updateState(loginOrRegisterToggleSwitch); // Switch to register
             }
         });
     }
@@ -55,9 +59,9 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(registerState){
-                    updateState(0); // Login
+                    updateState(attemptToRegister);
                 } else {
-                    updateState(1); // Register
+                    updateState(attemptToLogin);
                 }
             }
         });
@@ -67,15 +71,17 @@ public class Login extends AppCompatActivity {
     private void checkForResponse(){
         String response = ra.getResponse(); //Wait for a response. This is a blocking call in RequestActions thread
         if(response.contains("_id")){   //Registration was successful
-            updateState(4);
+            updateState(successfulRegistration);
+            updateState(attemptToLogin);
         } else if (response.contains("token")){
+            updateState(successfulLogin);
             Credentials.setToken(response.substring(response.indexOf("Bearer"), response.length()-2));
             Intent intent = new Intent(this, DashboardActivity.class);
             startActivity(intent);  //Start Dashboard activity
         } else if(response.contains("Username taken")) {
-            updateState(3);
+            updateState(usernameTaken);
         } else {
-            updateState(2);
+            updateState(invalidCredentials);
         }
     }
 
@@ -85,20 +91,23 @@ public class Login extends AppCompatActivity {
         EditText password = findViewById(R.id.passwordText);
 
         switch(stateNumber){
-            case 0:
+            case attemptToRegister:
                 ra.addPOSTToQueue(Paths.getRegisterPath(), "username="+username.getText()+"&password="+password.getText());
                 break;
-            case 1:
-            case 4:
+            case attemptToLogin:
+            case successfulRegistration:
                 ra.addPOSTToQueue(Paths.getLoginPath(), "username="+username.getText()+"&password="+password.getText());
                 break;
-            case 2:
+            case invalidCredentials:
                 break;
-            case 5:
-                registerState = true;
+            case loginOrRegisterToggleSwitch:
+                if(registerState) {
+                    registerState = false;
+                } else {
+                    registerState = true;
+                }
                 break;
-            case 6:
-                registerState = false;
+            case successfulLogin:
                 break;
         }
         if(waitForResponse()){
@@ -126,28 +135,32 @@ public class Login extends AppCompatActivity {
                 TextView usernameColon = findViewById(R.id.usernameColon);
                 ProgressBar spinner = findViewById(R.id.registerProgressBar);
                 TextView statusText = findViewById(R.id.statusText);
+                EditText password = findViewById(R.id.passwordText);
 
                 switch(state){
-                    case 0: //Attempt to Register
+                    case attemptToRegister:
                         break;
-                    case 1: //Attempt to Login
+                    case attemptToLogin:
                         break;
-                    case 2: //Invalid Credentials
+                    case invalidCredentials:
                         passwordColon.setTextColor(Color.RED);
-                    case 3: //Username Taken
+                    case usernameTaken:
                         usernameColon.setTextColor(Color.RED);
                         break;
-                    case 4: // Successful Registration
+                    case successfulRegistration:
                         break;
-                    case 5: //Don't have an account
-                        submitButton.setText("Register");
-                        registerButton.setText("Already Have an Account?");
+                    case successfulLogin:
+                        password.setText("");
+                        registerState = false;
+                    case loginOrRegisterToggleSwitch:
+                        if(registerState) {
+                            submitButton.setText("Register");
+                            registerButton.setText("Already Have an Account?");
+                        } else {
+                            submitButton.setText("Login");
+                            registerButton.setText("Need an Account?");
+                        }
                         break;
-                    case 6: //Already have an account
-                        submitButton.setText("Login");
-                        registerButton.setText("Need an Account?");
-                        break;
-                    default:
                 }
                 if(getSpinnerVisibility()){
                     spinner.setVisibility(View.VISIBLE);
@@ -162,8 +175,8 @@ public class Login extends AppCompatActivity {
     //Add the state numbers for which the spinner should spin
     private boolean getSpinnerVisibility(){
         switch(state){
-            case 0:
-            case 1:
+            case attemptToRegister:
+            case attemptToLogin:
                 return true;
         }
         return false;
@@ -171,9 +184,9 @@ public class Login extends AppCompatActivity {
 
     private boolean waitForResponse(){
         switch(state){
-            case 0:
-            case 1:
-            case 4:
+            case attemptToRegister:
+            case attemptToLogin:
+            case successfulRegistration:
                 return true;
         }
         return false;
@@ -182,15 +195,15 @@ public class Login extends AppCompatActivity {
     //Set the status text to match the current state
     private String getStatusText(){
         switch(state){
-            case 0:
+            case attemptToRegister:
                 return "Creating Account...";
-            case 1:
+            case attemptToLogin:
                 return "Authenticating...";
-            case 2:
+            case invalidCredentials:
                 return "Invalid Credentials";
-            case 3:
+            case usernameTaken:
                 return "Username Taken";
-            case 4:
+            case successfulRegistration:
                 return "Success!";
         }
         return "";

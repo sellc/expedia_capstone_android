@@ -39,16 +39,10 @@ public class Login extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Button submitButton = findViewById(R.id.submitButton);
-                Button registerButton = findViewById(R.id.registerButton);
                 if(registerState == false) {
-                    registerState = true;
-                    submitButton.setText("Register");
-                    registerButton.setText("Already Have an Account?");
+                    updateState(5); // Switch to register
                 } else {
-                    registerState = false;
-                    submitButton.setText("Login");
-                    registerButton.setText("Need an Account?");
+                    updateState(6); // Switch to login
                 }
             }
         });
@@ -61,98 +55,63 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(registerState){
-                    state = 0;
-                    updateGUIState();
-                    register();
+                    updateState(0); // Login
                 } else {
-                    state = 1;
-                    updateGUIState();
-                    login();    //Creates and sends the request
-                }
-                toggleSpinner();
-            }
-        });
-    }
-
-    //Get the text from the username field
-    private String getUsername(){
-        EditText username = findViewById(R.id.usernameText);
-        return String.valueOf(username.getText());
-    }
-
-    //Get the text from the password field
-    private String getPassword(){
-        EditText password = findViewById(R.id.passwordText);
-        return String.valueOf(password.getText());
-    }
-
-    private void toggleSpinner(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ProgressBar spinner = findViewById(R.id.registerProgressBar);
-                if(spinner.getVisibility() == View.INVISIBLE) {
-                    spinner.setVisibility(View.VISIBLE);    //Display the progress bar for the user
-                } else {
-                    spinner.setVisibility(View.INVISIBLE);    //Display the progress bar for the user
+                    updateState(1); // Register
                 }
             }
         });
-
-    }
-
-    //Launches the dashboard activity
-    public void goToDashboard(){
-        Intent intent = new Intent(this, DashboardActivity.class);
-        startActivity(intent);
-    }
-
-    //Add a login POST request to the queue
-    public void login() {
-        ra.addPOSTToQueue(Paths.getLoginPath(), "username="+getUsername()+"&password="+getPassword());
-
-        //Create a thread to check for a token otherwise it blocks the main thread
-        Thread check = new Thread(){
-            @Override
-            public void run() {
-                super.run();
-                checkForResponse();
-            }
-        };
-        check.start();
-    }
-
-    //Add a POST request to the queue and try to register a user
-    public void register() {
-        ra.addPOSTToQueue(Paths.getRegisterPath(), "username="+getUsername()+"&password="+getPassword());
-        Thread check = new Thread(){    //Create a new thread so the main thread isn't blocked
-            @Override
-            public void run() {
-                super.run();
-                checkForResponse();
-            }
-        };
-        check.start();
     }
 
     //Check for a response from the server
     private void checkForResponse(){
         String response = ra.getResponse(); //Wait for a response. This is a blocking call in RequestActions thread
         if(response.contains("_id")){   //Registration was successful
-            ra.addPOSTToQueue(Paths.getLoginPath(), "username="+getUsername()+"&password="+getPassword());
-            state = 4;
-            updateGUIState();
-            checkForResponse();
+            updateState(4);
         } else if (response.contains("token")){
             Credentials.setToken(response.substring(response.indexOf("Bearer"), response.length()-2));
-            goToDashboard();
+            Intent intent = new Intent(this, DashboardActivity.class);
+            startActivity(intent);  //Start Dashboard activity
         } else if(response.contains("Username taken")) {
-            state = 3;
-            updateGUIState();
+            updateState(3);
         } else {
-            state = 2;
-            updateGUIState();
+            updateState(2);
         }
+    }
+
+    private void updateState(int stateNumber){
+        this.state = stateNumber;
+        EditText username = findViewById(R.id.usernameText);
+        EditText password = findViewById(R.id.passwordText);
+
+        switch(stateNumber){
+            case 0:
+                ra.addPOSTToQueue(Paths.getRegisterPath(), "username="+username.getText()+"&password="+password.getText());
+                break;
+            case 1:
+            case 4:
+                ra.addPOSTToQueue(Paths.getLoginPath(), "username="+username.getText()+"&password="+password.getText());
+                break;
+            case 2:
+                break;
+            case 5:
+                registerState = true;
+                break;
+            case 6:
+                registerState = false;
+                break;
+        }
+        if(waitForResponse()){
+            Thread check = new Thread(){    //Create a new thread so the main thread isn't blocked
+                @Override
+                public void run() {
+                    super.run();
+                    checkForResponse();
+                }
+            };
+            check.start();
+        }
+        updateGUIState();
     }
 
     //Call if a request returned a 4xx.
@@ -161,29 +120,66 @@ public class Login extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Button submitButton = findViewById(R.id.submitButton);
+                Button registerButton = findViewById(R.id.registerButton);
+                TextView passwordColon = findViewById(R.id.passwordColon);
+                TextView usernameColon = findViewById(R.id.usernameColon);
+                ProgressBar spinner = findViewById(R.id.registerProgressBar);
+                TextView statusText = findViewById(R.id.statusText);
+
                 switch(state){
                     case 0: //Attempt to Register
                         break;
                     case 1: //Attempt to Login
                         break;
                     case 2: //Invalid Credentials
-                        TextView passwordColon = findViewById(R.id.passwordColon);
                         passwordColon.setTextColor(Color.RED);
                     case 3: //Username Taken
-                        TextView usernameColon = findViewById(R.id.usernameColon);
                         usernameColon.setTextColor(Color.RED);
                         break;
                     case 4: // Successful Registration
-
+                        break;
+                    case 5: //Don't have an account
+                        submitButton.setText("Register");
+                        registerButton.setText("Already Have an Account?");
+                        break;
+                    case 6: //Already have an account
+                        submitButton.setText("Login");
+                        registerButton.setText("Need an Account?");
                         break;
                     default:
                 }
-                TextView statusText = findViewById(R.id.statusText);
+                if(getSpinnerVisibility()){
+                    spinner.setVisibility(View.VISIBLE);
+                } else {
+                    spinner.setVisibility(View.INVISIBLE);
+                }
                 statusText.setText(getStatusText());
             }
         });
     }
 
+    //Add the state numbers for which the spinner should spin
+    private boolean getSpinnerVisibility(){
+        switch(state){
+            case 0:
+            case 1:
+                return true;
+        }
+        return false;
+    }
+
+    private boolean waitForResponse(){
+        switch(state){
+            case 0:
+            case 1:
+            case 4:
+                return true;
+        }
+        return false;
+    }
+
+    //Set the status text to match the current state
     private String getStatusText(){
         switch(state){
             case 0:

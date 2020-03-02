@@ -30,6 +30,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.capstone.Retrofit_Services.APIUtils;
+import com.capstone.Retrofit_Services.FileService;
+import com.capstone.Retrofit_Services.Result;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -290,32 +294,32 @@ public class TakePictureActivity extends AppCompatActivity {
     }
 
 
-    private void updateGUIState(){
-        runOnUiThread(new Runnable() {
-
-            public void run(){
-                Button captureImageButton = findViewById(R.id.captureImageButton);
-                Button chooseImageButton = findViewById(R.id.chooseImageButton);
-                Button uploadImageButton = findViewById(R.id.uploadImageButton);
-                ScrollView entriesScrollView = findViewById(R.id.entriesScrollView);
-
-                switch(state) {
-                    case 0: //Dashboard Clicked
-                        captureImageButton.setVisibility(View.INVISIBLE);
-                        chooseImageButton.setVisibility(View.INVISIBLE);
-                        uploadImageButton.setVisibility(View.INVISIBLE);
-                        entriesScrollView.setVisibility(View.VISIBLE);
-                        break;
-                    case 1: //Camera Clicked
-                        captureImageButton.setVisibility(View.VISIBLE);
-                        chooseImageButton.setVisibility(View.VISIBLE);
-                        uploadImageButton.setVisibility(View.VISIBLE);
-                        entriesScrollView.setVisibility(View.INVISIBLE);
-                        break;
-                    default:
-
-                }
-            }
-        });
-    }
+//    private void updateGUIState(){
+//        runOnUiThread(new Runnable() {
+//
+//            public void run(){
+//                Button captureImageButton = findViewById(R.id.captureImageButton);
+//                Button chooseImageButton = findViewById(R.id.chooseImageButton);
+//                Button uploadImageButton = findViewById(R.id.uploadImageButton);
+//                ScrollView entriesScrollView = findViewById(R.id.entriesScrollView);
+//
+//                switch(state) {
+//                    case 0: //Dashboard Clicked
+//                        captureImageButton.setVisibility(View.INVISIBLE);
+//                        chooseImageButton.setVisibility(View.INVISIBLE);
+//                        uploadImageButton.setVisibility(View.INVISIBLE);
+//                        entriesScrollView.setVisibility(View.VISIBLE);
+//                        break;
+//                    case 1: //Camera Clicked
+//                        captureImageButton.setVisibility(View.VISIBLE);
+//                        chooseImageButton.setVisibility(View.VISIBLE);
+//                        uploadImageButton.setVisibility(View.VISIBLE);
+//                        entriesScrollView.setVisibility(View.INVISIBLE);
+//                        break;
+//                    default:
+//
+//                }
+//            }
+//        });
+//    }
 }

@@ -1,4 +1,4 @@
-package com.capstone;
+package com.capstone.Retrofit_Services;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

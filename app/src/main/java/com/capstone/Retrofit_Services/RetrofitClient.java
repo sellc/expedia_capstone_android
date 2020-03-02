@@ -1,4 +1,4 @@
-package com.capstone;
+package com.capstone.Retrofit_Services;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;

@@ -17,6 +17,6 @@ public interface FileService {
 
     @Multipart
     @POST("classify/authClassify")
-    Call<List<Result>> uploadAuth(@Header("jwt") String authorization, @Part MultipartBody.Part file);
+    Call<Result> uploadAuth(@Header("Authorization") String authorization, @Part MultipartBody.Part file);
 
 }

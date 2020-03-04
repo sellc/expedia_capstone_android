@@ -26,11 +26,11 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.capstone.Retrofit_Services.APIUtils;
+import com.capstone.Retrofit_Services.Classification;
 import com.capstone.Retrofit_Services.FileService;
 import com.capstone.Retrofit_Services.Result;
 import com.capstone.TCP_Client.Credentials;
@@ -45,7 +45,6 @@ public class TakePictureActivity extends AppCompatActivity {
 
     private static final int REQUEST_SELECT_PHOTO = 0;
     private static final int REQUEST_TAKE_PHOTO = 1;
-    private int state = 0;
 
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -150,10 +149,10 @@ public class TakePictureActivity extends AppCompatActivity {
                 MultipartBody.Part body = MultipartBody.Part.createFormData("myFile", file.getName(), requestBody);
 
                 String jwt = Credentials.getToken();
-                Call<List<Result>> call = fileService.uploadAuth(jwt, body);
-                call.enqueue(new Callback<List<Result>>() {
+                Call<Result> call = fileService.uploadAuth(jwt, body);
+                call.enqueue(new Callback<Result>() {
                     @Override
-                    public void onResponse(Call<List<Result>> call, Response<List<Result>> response) {
+                    public void onResponse(Call<Result> call, Response<Result> response) {
                         String message = response.raw().toString();
                         if (response.isSuccessful()) {
                             System.out.println( "**********************Upload Successful: " + message);
@@ -164,7 +163,7 @@ public class TakePictureActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<List<Result>> call, Throwable t) {
+                    public void onFailure(Call<Result> call, Throwable t) {
                         System.out.println("ERROR: " + t.getMessage());
                         resultTextView.setText("Server is down. Try again later.");
                     }
@@ -275,12 +274,18 @@ public class TakePictureActivity extends AppCompatActivity {
     }
 
     // Display ML classification results on the page
-    private void displayResults(Response<List<Result>> response) {
+    private void displayResults(Response<Result> response) {
         StringBuilder sb = new StringBuilder();
         if (response.body() != null) {
-            for (Result result : response.body()) {
-                String className = result.getClassName();
-                double probability = result.getProbability() * 100;
+            Result result = response.body();
+//            String id = result.get_id();
+//            String title = result.getTitle();
+//            String user = result.getUser();
+//            String imageUrl = result.getImageUrl();
+            List<Classification> classifications = result.getClassification();
+            for (Classification classification : classifications) {
+                String className = classification.getClassName();
+                double probability = classification.getProbability() * 100;
                 sb.append(String.format("%s...... %.2f%%\n\n", className, probability));
             }
             resultTextView.setText(sb.toString());
@@ -289,13 +294,12 @@ public class TakePictureActivity extends AppCompatActivity {
         }
     }
 
+    // Button to switch to dashboard
     private void setDashboardImage(){
         ImageView dashboardImage = findViewById(R.id.dashboardImageView);
         dashboardImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                state = 0;
-//                updateGUIState();
                 Intent intent = new Intent(TakePictureActivity.this, DashboardActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
@@ -303,33 +307,4 @@ public class TakePictureActivity extends AppCompatActivity {
         });
     }
 
-
-//    private void updateGUIState(){
-//        runOnUiThread(new Runnable() {
-//
-//            public void run(){
-//                Button captureImageButton = findViewById(R.id.captureImageButton);
-//                Button chooseImageButton = findViewById(R.id.chooseImageButton);
-//                Button uploadImageButton = findViewById(R.id.uploadImageButton);
-//                ScrollView entriesScrollView = findViewById(R.id.entriesScrollView);
-//
-//                switch(state) {
-//                    case 0: //Dashboard Clicked
-//                        captureImageButton.setVisibility(View.INVISIBLE);
-//                        chooseImageButton.setVisibility(View.INVISIBLE);
-//                        uploadImageButton.setVisibility(View.INVISIBLE);
-//                        entriesScrollView.setVisibility(View.VISIBLE);
-//                        break;
-//                    case 1: //Camera Clicked
-//                        captureImageButton.setVisibility(View.VISIBLE);
-//                        chooseImageButton.setVisibility(View.VISIBLE);
-//                        uploadImageButton.setVisibility(View.VISIBLE);
-//                        entriesScrollView.setVisibility(View.INVISIBLE);
-//                        break;
-//                    default:
-//
-//                }
-//            }
-//        });
-//    }
 }

@@ -3,33 +3,74 @@ package com.capstone.Retrofit_Services;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class Result {
-    @SerializedName("className")
+    @SerializedName("_id")
     @Expose
-    private String className;
+    private String _id;
 
-    @SerializedName("probability")
+    @SerializedName("title")
     @Expose
-    private double probability;
+    private String title;
 
-    public Result(String className, double probability) {
-        this.className = className;
-        this.probability = probability;
+    @SerializedName("user")
+    @Expose
+    private String user;
+
+    @SerializedName("imageUrl")
+    @Expose
+    private String imageUrl;
+
+    @SerializedName("classification")
+    @Expose
+    private List<Classification> classification;
+
+    public Result(String _id, String title, String user, String imageUrl, List<Classification> classification) {
+        this._id = _id;
+        this.title = title;
+        this.user = user;
+        this.imageUrl = imageUrl;
+        this.classification = classification;
     }
 
-    public String getClassName() {
-        return className;
+    public String get_id() {
+        return _id;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
-    public double getProbability() {
-        return probability;
+    public String getTitle() {
+        return title;
     }
 
-    public void setProbability(double probability) {
-        this.probability = probability;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public List<Classification> getClassification() {
+        return classification;
+    }
+
+    public void setClassification(List<Classification> classification) {
+        this.classification = classification;
     }
 }

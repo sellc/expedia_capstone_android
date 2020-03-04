@@ -30,8 +30,6 @@ public class DashboardActivity extends AppCompatActivity {
         cameraImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                state = 1;
-//                updateGUIState();
                 Intent intent = new Intent(DashboardActivity.this, TakePictureActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);

@@ -19,9 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Login"></activity>
+        <activity android:name=".DashboardActivity"></activity>
         <activity android:name=".TakePictureActivity" />
-        <activity android:name=".DashboardActivity">
+        <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

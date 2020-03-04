@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.capstone.Retrofit_Services.APIUtils;
 import com.capstone.Retrofit_Services.FileService;
 import com.capstone.Retrofit_Services.Result;
+import com.capstone.TCP_Client.Credentials;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,7 +149,8 @@ public class TakePictureActivity extends AppCompatActivity {
                 RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                 MultipartBody.Part body = MultipartBody.Part.createFormData("myFile", file.getName(), requestBody);
 
-                Call<List<Result>> call = fileService.upload(body);
+                String jwt = Credentials.getToken();
+                Call<List<Result>> call = fileService.uploadAuth(jwt, body);
                 call.enqueue(new Callback<List<Result>>() {
                     @Override
                     public void onResponse(Call<List<Result>> call, Response<List<Result>> response) {
@@ -196,6 +198,14 @@ public class TakePictureActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Unable to choose image.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent startMain = new Intent(TakePictureActivity.this, Login.class);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(startMain);
     }
 
     // Get the path from the image selected

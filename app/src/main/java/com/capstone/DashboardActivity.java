@@ -16,6 +16,15 @@ public class DashboardActivity extends AppCompatActivity {
         setCameraImage();
     }
 
+    @Override
+    // Return to Login Page on pressing back button - or do we want an intermediate Home Page or is Dashboard our Home Page?
+    public void onBackPressed() {
+        Intent startMain = new Intent(DashboardActivity.this, Login.class);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(startMain);
+    }
+
     private void setCameraImage(){
         ImageView cameraImage = findViewById(R.id.cameraImageView);
         cameraImage.setOnClickListener(new View.OnClickListener() {

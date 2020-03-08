@@ -26,6 +26,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,7 +81,7 @@ public class TakePictureActivity extends AppCompatActivity {
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
             buttonChooseFile.setEnabled(false);
-            Toast.makeText(this, "Permissions not granted", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Permissions not granted", Toast.LENGTH_LONG).show();
             // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(
                     this,
@@ -144,6 +145,11 @@ public class TakePictureActivity extends AppCompatActivity {
         buttonUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Clear text box and start spinner
+                resultTextView.setText("");
+                ProgressBar spinner = findViewById(R.id.progressBar);
+                spinner.setVisibility(View.VISIBLE);
+
                 File file = new File(imagePath);
                 RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                 MultipartBody.Part body = MultipartBody.Part.createFormData("myFile", file.getName(), requestBody);
@@ -153,6 +159,7 @@ public class TakePictureActivity extends AppCompatActivity {
                 call.enqueue(new Callback<Result>() {
                     @Override
                     public void onResponse(Call<Result> call, Response<Result> response) {
+                        spinner.setVisibility(View.GONE);
                         String message = response.raw().toString();
                         if (response.isSuccessful()) {
                             System.out.println( "**********************Upload Successful: " + message);
@@ -164,6 +171,7 @@ public class TakePictureActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<Result> call, Throwable t) {
+                        spinner.setVisibility(View.GONE);
                         System.out.println("ERROR: " + t.getMessage());
                         resultTextView.setText("Server is down. Try again later.");
                     }

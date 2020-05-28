@@ -241,6 +241,7 @@ public class TakePictureActivity extends AppCompatActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         imagePath = image.getAbsolutePath();
+        ImageManager.addImagePath(imagePath);
         return image;
     }
 

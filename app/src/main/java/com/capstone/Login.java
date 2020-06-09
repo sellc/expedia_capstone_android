@@ -50,7 +50,6 @@ public class Login extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                hideKeyboard();
                 updateState(loginOrRegisterToggleSwitch); // Switch to register
             }
         });

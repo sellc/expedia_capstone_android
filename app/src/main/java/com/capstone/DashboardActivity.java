@@ -15,6 +15,7 @@ import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -49,8 +50,6 @@ public class DashboardActivity extends AppCompatActivity {
     private final int imageClicked = 1;
     private String clickedImageFilePath = "";
     private String classifications = "";
-    private int tileCount = 0;
-    private int tileClicked = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +108,6 @@ public class DashboardActivity extends AppCompatActivity {
 
         switch(stateNumber){
             case loadImages:
-                tileCount = 0;
                 break;
             case imageClicked:
                 classifications = ImageManager.getClassifications(clickedImageFilePath);
@@ -136,8 +134,7 @@ public class DashboardActivity extends AppCompatActivity {
                     case loadImages:
                         imageLayout.removeAllViewsInLayout();
                         for(String currentPath : ImageManager.getFilePaths()){
-                            imageLayout.addView(setIndividualImageView(imageLayout.getContext(), params, currentPath, tileCount));
-                            tileCount++;
+                            imageLayout.addView(setIndividualImageView(imageLayout.getContext(), params, currentPath));
                         }
                         break;
                     case imageClicked:
@@ -151,22 +148,41 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    private ImageView setIndividualImageView(Context context, LinearLayout.LayoutParams params, String imagePath, int tileNum){
+    private FrameLayout setIndividualFrameLayout(Context context, LinearLayout.LayoutParams params, String imagePath){
+        FrameLayout frame = new FrameLayout(context);
+        return frame;
+    }
+
+    private ImageView setIndividualImageView(Context context, LinearLayout.LayoutParams params, String imagePath){
         ImageView view = new ImageView(context);
         view.setLayoutParams(params);
-//        view.setMaxHeight(150);
-//        view.setMaxWidth(LinearLayout.LayoutParams.MATCH_PARENT);
-        view.setPadding(5, 5, 5, 5);
+        view.setBackgroundResource(R.drawable.outline);
+        view.setPadding(3, 3, 3, 3);
         view.setImageBitmap(BitmapFactory.decodeFile(imagePath));
         view.requestLayout();
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tileClicked = tileNum;
+
                 clickedImageFilePath = imagePath;
                 updateState(imageClicked);
             }
         });
         return view;
+    }
+
+    private TextView setIndividualTextView(Context context, LinearLayout.LayoutParams params, String imagePath){
+        TextView textClassifications = new TextView(context);
+        classifications = ImageManager.getClassifications(imagePath);
+        Scanner classificationParser = new Scanner(classifications);
+        while(classificationParser.hasNext()){
+            classifications += classificationParser.next() + "\n";
+        }
+        textClassifications.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+
+            }
+        });
+        return textClassifications;
     }
 }

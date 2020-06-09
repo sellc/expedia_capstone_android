@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -33,6 +35,7 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_login);
 
         ra = new RequestActions();
@@ -47,6 +50,7 @@ public class Login extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                hideKeyboard();
                 updateState(loginOrRegisterToggleSwitch); // Switch to register
             }
         });
@@ -58,6 +62,7 @@ public class Login extends AppCompatActivity {
         launchDashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboard();
                 if(registerState){
                     updateState(attemptToRegister);
                 } else {
@@ -65,6 +70,15 @@ public class Login extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void hideKeyboard(){
+        try {
+            InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(findViewById(R.id.passwordText).getWindowToken(), 0);
+        } catch (Exception e) {
+            System.out.println("Keyboard is already minimized");
+        }
     }
 
     //Check for a response from the server

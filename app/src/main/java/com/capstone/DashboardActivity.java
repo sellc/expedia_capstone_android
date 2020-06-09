@@ -55,6 +55,7 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_dashboard);
 
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);

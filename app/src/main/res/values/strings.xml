@@ -10,4 +10,7 @@
     <string name="dashboardButtonText">Dashboard</string>
     <string name="partnerTitle">Expedia Capstone Project</string>
     <string name="projectTitle">Amenity Detector</string>
+    <string name="captureImageButtonText">Capture Image</string>
+    <string name="chooseImageButtonText">Choose Image</string>
+    <string name="orText">or</string>
 </resources>

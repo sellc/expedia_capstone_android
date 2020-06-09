@@ -48,7 +48,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:padding="5sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,7 +58,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/outline"
             android:clickable="true"
+            android:padding="10sp"
             app:srcCompat="@mipmap/dashboard" />
 
         <ImageView
@@ -67,7 +68,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/outline"
             android:clickable="true"
+            android:padding="10sp"
             app:srcCompat="@mipmap/camera" />
     </LinearLayout>
 

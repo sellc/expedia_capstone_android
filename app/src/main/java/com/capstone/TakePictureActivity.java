@@ -241,7 +241,6 @@ public class TakePictureActivity extends AppCompatActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         imagePath = image.getAbsolutePath();
-        ImageManager.addImagePath(imagePath);
         return image;
     }
 
@@ -292,11 +291,14 @@ public class TakePictureActivity extends AppCompatActivity {
 //            String user = result.getUser();
 //            String imageUrl = result.getImageUrl();
             List<Classification> classifications = result.getClassification();
+            String classificationList = "";
             for (Classification classification : classifications) {
                 String className = classification.getClassName();
                 double probability = classification.getProbability() * 100;
                 sb.append(String.format("%s...... %.2f%%\n\n", className, probability));
+                classificationList += "," + className + "," + probability;
             }
+            ImageManager.addClassifiedImage(imagePath, classificationList);
             resultTextView.setText(sb.toString());
         } else {
             resultTextView.setText("No Response");

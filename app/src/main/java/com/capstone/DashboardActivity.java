@@ -1,6 +1,7 @@
 package com.capstone;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,18 +28,20 @@ import androidx.core.content.ContextCompat;
 import com.capstone.Retrofit_Services.FileService;
 import com.capstone.TCP_Client.Paths;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
+import java.util.Scanner;
 
 public class DashboardActivity extends AppCompatActivity {
 
     private int state;
-    private FileService fileService;
-    private ImageView imageView;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
     private final int loadImages = 0;
 
     @Override
@@ -45,13 +49,12 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        ImageManager.readInImagePaths();
+        ImageManager.readInClassifiedImages();
         setCameraImage();
 
         int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
-            //Toast.makeText(this, "Permissions not granted", Toast.LENGTH_LONG).show();
             // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(
                     this,
@@ -59,8 +62,6 @@ public class DashboardActivity extends AppCompatActivity {
                     REQUEST_EXTERNAL_STORAGE
             );
         }
-        updateState(loadImages);
-
     }
     @Override
     public void onResume(){
@@ -89,34 +90,6 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    // Display scaled image on page
-    private void displayImages() {
-
-        for(String currentPath : ImageManager.getFilePaths()){
-            // Get the dimensions of the View
-            int targetW = imageView.getWidth();
-            int targetH = imageView.getHeight();
-
-            // Get the dimensions of the bitmap
-            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            bmOptions.inJustDecodeBounds = true;
-
-            int photoW = bmOptions.outWidth;
-            int photoH = bmOptions.outHeight;
-
-            // Determine how much to scale down the image
-            int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-
-            // Decode the image file into a Bitmap sized to fill the View
-            bmOptions.inJustDecodeBounds = false;
-            bmOptions.inSampleSize = scaleFactor;
-            bmOptions.inPurgeable = true;
-
-            Bitmap bitmap = BitmapFactory.decodeFile(currentPath, bmOptions);
-            imageView.setImageBitmap(bitmap);
-        }
-    }
-
     private void updateState(int stateNumber){
         this.state = stateNumber;
 
@@ -131,31 +104,50 @@ public class DashboardActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                LinearLayout imageLayout = findViewById(R.id.imageLayout);
                 DisplayMetrics displayMetrics = new DisplayMetrics();
                 getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                ImageView view;
+                int height = displayMetrics.heightPixels/5;
+                int width = displayMetrics.widthPixels/2;
+
+                LinearLayout imageLayout = findViewById(R.id.imageLayout);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width,height);
+
                 switch(state){
                     case loadImages:
                         imageLayout.removeAllViewsInLayout();
-
                         for(String currentPath : ImageManager.getFilePaths()){
-                            System.out.println("CURRENT PATH" + currentPath + "********************************************");
-                            view = new ImageView(imageLayout.getContext());
-                            int height = displayMetrics.heightPixels/5;
-                            int width = displayMetrics.widthPixels/2;
-                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width,height);
-                            view.setLayoutParams(params);
-                            view.setMaxHeight(150);
-                            view.setMaxWidth(LinearLayout.LayoutParams.MATCH_PARENT);
-
-                            view.setImageBitmap(BitmapFactory.decodeFile(currentPath));
-                            view.requestLayout();
-                            imageLayout.addView(view);
+                            imageLayout.addView(setIndividualImageView(imageLayout.getContext(), params, currentPath));
                         }
                         break;
                 }
             }
         });
+    }
+
+    private ImageView setIndividualImageView(Context context, LinearLayout.LayoutParams params, String imagePath){
+        ImageView view = new ImageView(context);
+        view.setLayoutParams(params);
+        view.setMaxHeight(150);
+        view.setMaxWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+        view.setImageBitmap(BitmapFactory.decodeFile(imagePath));
+        view.requestLayout();
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String classifications = ImageManager.getClassifications(imagePath);
+                Scanner classificationParser = new Scanner(classifications);
+                ScrollView resultsDisplay = findViewById(R.id.imageClassifications);
+                LinearLayout imageClassificationLinearLayout = findViewById(R.id.imageClassificationsLinearLayout);
+                imageClassificationLinearLayout.removeAllViews();
+                TextView classification;
+                while(classificationParser.hasNext()){
+                    classification = new TextView(imageClassificationLinearLayout.getContext());
+                    classification.setText(classificationParser.next());
+                    imageClassificationLinearLayout.addView(classification);
+                }
+                resultsDisplay.setVisibility(View.VISIBLE);
+            }
+        });
+        return view;
     }
 }

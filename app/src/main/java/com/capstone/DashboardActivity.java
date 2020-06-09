@@ -41,13 +41,25 @@ public class DashboardActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+    private DisplayMetrics displayMetrics = new DisplayMetrics();
+    private int height = 0;
+    private int width = 0;
 
     private final int loadImages = 0;
+    private final int imageClicked = 1;
+    private String clickedImageFilePath = "";
+    private String classifications = "";
+    private int tileCount = 0;
+    private int tileClicked = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        height = displayMetrics.heightPixels/3;
+        width = displayMetrics.widthPixels/2;
 
         ImageManager.readInClassifiedImages();
         setCameraImage();
@@ -95,6 +107,14 @@ public class DashboardActivity extends AppCompatActivity {
 
         switch(stateNumber){
             case loadImages:
+                tileCount = 0;
+                break;
+            case imageClicked:
+                classifications = ImageManager.getClassifications(clickedImageFilePath);
+                Scanner classificationParser = new Scanner(classifications);
+                while(classificationParser.hasNext()){
+                    classifications += classificationParser.next() + "\n";
+                }
                 break;
         }
         updateGUIState();
@@ -104,48 +124,44 @@ public class DashboardActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                DisplayMetrics displayMetrics = new DisplayMetrics();
-                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                int height = displayMetrics.heightPixels/5;
-                int width = displayMetrics.widthPixels/2;
-
                 LinearLayout imageLayout = findViewById(R.id.imageLayout);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width,height);
+                ScrollView resultsDisplay = findViewById(R.id.imageClassifications);
+                LinearLayout imageClassificationLinearLayout = findViewById(R.id.imageClassificationsLinearLayout);
+                TextView classification = new TextView(imageClassificationLinearLayout.getContext());
 
                 switch(state){
                     case loadImages:
                         imageLayout.removeAllViewsInLayout();
                         for(String currentPath : ImageManager.getFilePaths()){
-                            imageLayout.addView(setIndividualImageView(imageLayout.getContext(), params, currentPath));
+                            imageLayout.addView(setIndividualImageView(imageLayout.getContext(), params, currentPath, tileCount));
+                            tileCount++;
                         }
+                        break;
+                    case imageClicked:
+                        imageClassificationLinearLayout.removeAllViews();
+                        classification.setText(classifications);
+                        imageClassificationLinearLayout.addView(classification);
+                        resultsDisplay.setVisibility(View.VISIBLE);
                         break;
                 }
             }
         });
     }
 
-    private ImageView setIndividualImageView(Context context, LinearLayout.LayoutParams params, String imagePath){
+    private ImageView setIndividualImageView(Context context, LinearLayout.LayoutParams params, String imagePath, int tileNum){
         ImageView view = new ImageView(context);
         view.setLayoutParams(params);
         view.setMaxHeight(150);
-        view.setMaxWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+//        view.setMaxWidth(LinearLayout.LayoutParams.MATCH_PARENT);
         view.setImageBitmap(BitmapFactory.decodeFile(imagePath));
         view.requestLayout();
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String classifications = ImageManager.getClassifications(imagePath);
-                Scanner classificationParser = new Scanner(classifications);
-                ScrollView resultsDisplay = findViewById(R.id.imageClassifications);
-                LinearLayout imageClassificationLinearLayout = findViewById(R.id.imageClassificationsLinearLayout);
-                imageClassificationLinearLayout.removeAllViews();
-                TextView classification;
-                while(classificationParser.hasNext()){
-                    classification = new TextView(imageClassificationLinearLayout.getContext());
-                    classification.setText(classificationParser.next());
-                    imageClassificationLinearLayout.addView(classification);
-                }
-                resultsDisplay.setVisibility(View.VISIBLE);
+                tileClicked = tileNum;
+                clickedImageFilePath = imagePath;
+                updateState(imageClicked);
             }
         });
         return view;

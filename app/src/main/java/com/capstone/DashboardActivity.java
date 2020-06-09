@@ -75,6 +75,7 @@ public class DashboardActivity extends AppCompatActivity {
             );
         }
     }
+
     @Override
     public void onResume(){
         super.onResume();
@@ -152,8 +153,9 @@ public class DashboardActivity extends AppCompatActivity {
     private ImageView setIndividualImageView(Context context, LinearLayout.LayoutParams params, String imagePath, int tileNum){
         ImageView view = new ImageView(context);
         view.setLayoutParams(params);
-        view.setMaxHeight(150);
+//        view.setMaxHeight(150);
 //        view.setMaxWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+        view.setPadding(5, 5, 5, 5);
         view.setImageBitmap(BitmapFactory.decodeFile(imagePath));
         view.requestLayout();
         view.setOnClickListener(new View.OnClickListener() {

@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -134,14 +135,14 @@ public class DashboardActivity extends AppCompatActivity {
                     case loadImages:
                         imageLayout.removeAllViewsInLayout();
                         for(String currentPath : ImageManager.getFilePaths()){
-                            imageLayout.addView(setIndividualImageView(imageLayout.getContext(), params, currentPath));
+                            imageLayout.addView(setIndividualFrameLayout(imageLayout.getContext(), params, currentPath));
                         }
                         break;
                     case imageClicked:
-                        imageClassificationLinearLayout.removeAllViews();
-                        classification.setText(classifications);
-                        imageClassificationLinearLayout.addView(classification);
-                        resultsDisplay.setVisibility(View.VISIBLE);
+//                        imageClassificationLinearLayout.removeAllViews();
+//                        classification.setText(classifications);
+//                        imageClassificationLinearLayout.addView(classification);
+//                        resultsDisplay.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -149,8 +150,27 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private FrameLayout setIndividualFrameLayout(Context context, LinearLayout.LayoutParams params, String imagePath){
-        FrameLayout frame = new FrameLayout(context);
-        return frame;
+        FrameLayout base = new FrameLayout(context);
+        ImageView image = setIndividualImageView(base.getContext(), params, imagePath);
+        TextView classifications = setIndividualTextView(base.getContext(), params, imagePath);
+        FrameLayout top = new FrameLayout(context);
+        top.setBackgroundColor(Color.TRANSPARENT);
+        base.addView(image);
+        base.addView(classifications);
+        base.addView(top);
+        top.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(image.getVisibility() == View.VISIBLE){
+                    image.setVisibility(View.INVISIBLE);
+                    classifications.setVisibility(View.VISIBLE);
+                } else {
+                    image.setVisibility(View.VISIBLE);
+                    classifications.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+        return base;
     }
 
     private ImageView setIndividualImageView(Context context, LinearLayout.LayoutParams params, String imagePath){
@@ -160,14 +180,14 @@ public class DashboardActivity extends AppCompatActivity {
         view.setPadding(3, 3, 3, 3);
         view.setImageBitmap(BitmapFactory.decodeFile(imagePath));
         view.requestLayout();
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                clickedImageFilePath = imagePath;
-                updateState(imageClicked);
-            }
-        });
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                clickedImageFilePath = imagePath;
+//                updateState(imageClicked);
+//            }
+//        });
         return view;
     }
 
@@ -178,11 +198,16 @@ public class DashboardActivity extends AppCompatActivity {
         while(classificationParser.hasNext()){
             classifications += classificationParser.next() + "\n";
         }
-        textClassifications.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-
-            }
-        });
+        textClassifications.setText(classifications);
+        textClassifications.setLayoutParams(params);
+//        textClassifications.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//
+//                clickedImageFilePath = imagePath;
+//                updateState(imageClicked);
+//            }
+//        });
         return textClassifications;
     }
 }

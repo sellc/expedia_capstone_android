@@ -123,8 +123,18 @@ public class DashboardActivity extends AppCompatActivity {
                 switch(state){
                     case loadImages:
                         imageLayout.removeAllViewsInLayout();
+                        int viewCount = 0;
+                        LinearLayout row = new LinearLayout(imageLayout.getContext());
+                        row.setOrientation(LinearLayout.HORIZONTAL);
+                        imageLayout.addView(row);
                         for(String currentPath : ImageManager.getFilePaths()){
-                            imageLayout.addView(setIndividualFrameLayout(imageLayout.getContext(), params, currentPath));
+                            if(viewCount%2 == 0){
+                                row = new LinearLayout(imageLayout.getContext());
+                                row.setOrientation(LinearLayout.HORIZONTAL);
+                                imageLayout.addView(row);
+                            }
+                            row.addView(setIndividualFrameLayout(imageLayout.getContext(), params, currentPath));
+                            viewCount++;
                         }
                         break;
                     case imageClicked:

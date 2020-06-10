@@ -149,7 +149,7 @@ public class DashboardActivity extends AppCompatActivity {
         ImageView image = setIndividualImageView(base.getContext(), params, imagePath);
         TextView classifications = setIndividualTextView(base.getContext(), params, imagePath);
         base.setBackgroundResource(R.drawable.outline);
-//        base.setBackgroundColor(Color.BLACK);
+        base.setPadding(3, 3, 3, 3);
         image.setVisibility(View.VISIBLE);
         classifications.setVisibility(View.INVISIBLE);
 
@@ -176,7 +176,6 @@ public class DashboardActivity extends AppCompatActivity {
         ImageView view = new ImageView(context);
         view.setLayoutParams(params);
         view.setBackgroundResource(R.drawable.outline);
-//        view.setBackgroundResource(R.drawable.outline);
         view.setPadding(3, 3, 3, 3);
         view.setImageBitmap(BitmapFactory.decodeFile(imagePath));
         view.requestLayout();

@@ -9,12 +9,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -47,10 +49,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     private final int loadImages = 0;
     private final int imageClicked = 1;
-    private String clickedImageFilePath = "";
-    private String classifications = "";
-    private int tileCount = 0;
-    private int tileClicked = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,15 +107,8 @@ public class DashboardActivity extends AppCompatActivity {
 
         switch(stateNumber){
             case loadImages:
-                tileCount = 0;
                 break;
             case imageClicked:
-                classifications = ImageManager.getClassifications(clickedImageFilePath);
-                Scanner classificationParser = new Scanner(classifications);
-                while(classificationParser.hasNext()){
-                    classifications += classificationParser.next() + "\n";
-                }
-                break;
         }
         updateGUIState();
     }
@@ -128,45 +119,77 @@ public class DashboardActivity extends AppCompatActivity {
             public void run() {
                 LinearLayout imageLayout = findViewById(R.id.imageLayout);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width,height);
-                ScrollView resultsDisplay = findViewById(R.id.imageClassifications);
-                LinearLayout imageClassificationLinearLayout = findViewById(R.id.imageClassificationsLinearLayout);
-                TextView classification = new TextView(imageClassificationLinearLayout.getContext());
 
                 switch(state){
                     case loadImages:
                         imageLayout.removeAllViewsInLayout();
+                        int viewCount = 0;
+                        LinearLayout row = new LinearLayout(imageLayout.getContext());
+                        row.setOrientation(LinearLayout.HORIZONTAL);
+                        imageLayout.addView(row);
                         for(String currentPath : ImageManager.getFilePaths()){
-                            imageLayout.addView(setIndividualImageView(imageLayout.getContext(), params, currentPath, tileCount));
-                            tileCount++;
+                            if(viewCount%2 == 0){
+                                row = new LinearLayout(imageLayout.getContext());
+                                row.setOrientation(LinearLayout.HORIZONTAL);
+                                imageLayout.addView(row);
+                            }
+                            row.addView(setIndividualFrameLayout(imageLayout.getContext(), params, currentPath));
+                            viewCount++;
                         }
                         break;
                     case imageClicked:
-                        imageClassificationLinearLayout.removeAllViews();
-                        classification.setText(classifications);
-                        imageClassificationLinearLayout.addView(classification);
-                        resultsDisplay.setVisibility(View.VISIBLE);
                         break;
                 }
             }
         });
     }
 
-    private ImageView setIndividualImageView(Context context, LinearLayout.LayoutParams params, String imagePath, int tileNum){
-        ImageView view = new ImageView(context);
-        view.setLayoutParams(params);
-//        view.setMaxHeight(150);
-//        view.setMaxWidth(LinearLayout.LayoutParams.MATCH_PARENT);
-        view.setPadding(5, 5, 5, 5);
-        view.setImageBitmap(BitmapFactory.decodeFile(imagePath));
-        view.requestLayout();
-        view.setOnClickListener(new View.OnClickListener() {
+    private FrameLayout setIndividualFrameLayout(Context context, LinearLayout.LayoutParams params, String imagePath){
+        FrameLayout base = new FrameLayout(context);
+        ImageView image = setIndividualImageView(base.getContext(), params, imagePath);
+        TextView classifications = setIndividualTextView(base.getContext(), params, imagePath);
+        base.setBackgroundResource(R.drawable.outline);
+        base.setPadding(3, 3, 3, 3);
+        image.setVisibility(View.VISIBLE);
+        classifications.setVisibility(View.INVISIBLE);
+
+        image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tileClicked = tileNum;
-                clickedImageFilePath = imagePath;
-                updateState(imageClicked);
+                image.setVisibility(View.INVISIBLE);
+                classifications.setVisibility(View.VISIBLE);
             }
         });
+        classifications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                image.setVisibility(View.VISIBLE);
+                classifications.setVisibility(View.INVISIBLE);
+            }
+        });
+        base.addView(image);
+        base.addView(classifications);
+        return base;
+    }
+
+    private ImageView setIndividualImageView(Context context, LinearLayout.LayoutParams params, String imagePath){
+        ImageView view = new ImageView(context);
+        view.setLayoutParams(params);
+        view.setBackgroundResource(R.drawable.outline);
+        view.setPadding(3, 3, 3, 3);
+        view.setImageBitmap(BitmapFactory.decodeFile(imagePath));
+        view.requestLayout();
         return view;
+    }
+
+    private TextView setIndividualTextView(Context context, LinearLayout.LayoutParams params, String imagePath){
+        TextView textClassifications = new TextView(context);
+        String classifications = ImageManager.getClassifications(imagePath);
+        textClassifications.setTextSize(16);
+        textClassifications.setText(classifications);
+        textClassifications.setLayoutParams(params);
+        textClassifications.setBackgroundResource(R.drawable.outline_with_background);
+        textClassifications.setPadding(15, 3, 15, 3);
+        return textClassifications;
     }
 }

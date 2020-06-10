@@ -55,8 +55,14 @@ public class ImageManager {
                     lineParser.useDelimiter(",");
                     filePath = lineParser.next();
                     while(lineParser.hasNext()){
-//                        classifications += lineParser.next() + " " + lineParser.next() + "\n";
-                        classifications += lineParser.next() + "\n";
+                        if (lineParser.hasNextDouble()) {
+                            classifications += "..." + lineParser.next() + "%\n";
+                        } else {
+                            classifications += lineParser.next();
+                            if(lineParser.hasNext() && !lineParser.hasNextDouble()){
+                                classifications += ", ";
+                            }
+                        }
                     }
                     filePaths.add(filePath);
                     imageClassifications.put(filePath, classifications);

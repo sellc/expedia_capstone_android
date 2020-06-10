@@ -138,7 +138,8 @@ public class DashboardActivity extends AppCompatActivity {
         FrameLayout base = new FrameLayout(context);
         ImageView image = setIndividualImageView(base.getContext(), params, imagePath);
         TextView classifications = setIndividualTextView(base.getContext(), params, imagePath);
-        base.setBackgroundColor(Color.BLACK);
+        base.setBackgroundResource(R.drawable.outline);
+//        base.setBackgroundColor(Color.BLACK);
         image.setVisibility(View.VISIBLE);
         classifications.setVisibility(View.INVISIBLE);
 
@@ -175,15 +176,11 @@ public class DashboardActivity extends AppCompatActivity {
     private TextView setIndividualTextView(Context context, LinearLayout.LayoutParams params, String imagePath){
         TextView textClassifications = new TextView(context);
         String classifications = ImageManager.getClassifications(imagePath);
-        Scanner classificationParser = new Scanner(classifications);
-        while(classificationParser.hasNext()){
-            classifications += classificationParser.next() + "\n";
-        }
+        textClassifications.setTextSize(16);
         textClassifications.setText(classifications);
         textClassifications.setLayoutParams(params);
-//        textClassifications.setBackgroundResource(R.drawable.outline);
-        textClassifications.setBackgroundColor(Color.GRAY);
-        textClassifications.setPadding(3, 3, 3, 3);
+        textClassifications.setBackgroundResource(R.drawable.outline_with_background);
+        textClassifications.setPadding(15, 3, 15, 3);
         return textClassifications;
     }
 }

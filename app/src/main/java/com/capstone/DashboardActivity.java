@@ -49,8 +49,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     private final int loadImages = 0;
     private final int imageClicked = 1;
-    private String clickedImageFilePath = "";
-    private String classifications = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,12 +109,6 @@ public class DashboardActivity extends AppCompatActivity {
             case loadImages:
                 break;
             case imageClicked:
-                classifications = ImageManager.getClassifications(clickedImageFilePath);
-                Scanner classificationParser = new Scanner(classifications);
-                while(classificationParser.hasNext()){
-                    classifications += classificationParser.next() + "\n";
-                }
-                break;
         }
         updateGUIState();
     }
@@ -127,9 +119,6 @@ public class DashboardActivity extends AppCompatActivity {
             public void run() {
                 LinearLayout imageLayout = findViewById(R.id.imageLayout);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width,height);
-                ScrollView resultsDisplay = findViewById(R.id.imageClassifications);
-                LinearLayout imageClassificationLinearLayout = findViewById(R.id.imageClassificationsLinearLayout);
-                TextView classification = new TextView(imageClassificationLinearLayout.getContext());
 
                 switch(state){
                     case loadImages:
@@ -139,10 +128,6 @@ public class DashboardActivity extends AppCompatActivity {
                         }
                         break;
                     case imageClicked:
-//                        imageClassificationLinearLayout.removeAllViews();
-//                        classification.setText(classifications);
-//                        imageClassificationLinearLayout.addView(classification);
-//                        resultsDisplay.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -153,23 +138,26 @@ public class DashboardActivity extends AppCompatActivity {
         FrameLayout base = new FrameLayout(context);
         ImageView image = setIndividualImageView(base.getContext(), params, imagePath);
         TextView classifications = setIndividualTextView(base.getContext(), params, imagePath);
-        FrameLayout top = new FrameLayout(context);
-        top.setBackgroundColor(Color.TRANSPARENT);
-        base.addView(image);
-        base.addView(classifications);
-        base.addView(top);
-        top.setOnClickListener(new View.OnClickListener() {
+        base.setBackgroundColor(Color.BLACK);
+        image.setVisibility(View.VISIBLE);
+        classifications.setVisibility(View.INVISIBLE);
+
+        image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(image.getVisibility() == View.VISIBLE){
-                    image.setVisibility(View.INVISIBLE);
-                    classifications.setVisibility(View.VISIBLE);
-                } else {
-                    image.setVisibility(View.VISIBLE);
-                    classifications.setVisibility(View.INVISIBLE);
-                }
+                image.setVisibility(View.INVISIBLE);
+                classifications.setVisibility(View.VISIBLE);
             }
         });
+        classifications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                image.setVisibility(View.VISIBLE);
+                classifications.setVisibility(View.INVISIBLE);
+            }
+        });
+        base.addView(image);
+        base.addView(classifications);
         return base;
     }
 
@@ -177,37 +165,25 @@ public class DashboardActivity extends AppCompatActivity {
         ImageView view = new ImageView(context);
         view.setLayoutParams(params);
         view.setBackgroundResource(R.drawable.outline);
+//        view.setBackgroundResource(R.drawable.outline);
         view.setPadding(3, 3, 3, 3);
         view.setImageBitmap(BitmapFactory.decodeFile(imagePath));
         view.requestLayout();
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                clickedImageFilePath = imagePath;
-//                updateState(imageClicked);
-//            }
-//        });
         return view;
     }
 
     private TextView setIndividualTextView(Context context, LinearLayout.LayoutParams params, String imagePath){
         TextView textClassifications = new TextView(context);
-        classifications = ImageManager.getClassifications(imagePath);
+        String classifications = ImageManager.getClassifications(imagePath);
         Scanner classificationParser = new Scanner(classifications);
         while(classificationParser.hasNext()){
             classifications += classificationParser.next() + "\n";
         }
         textClassifications.setText(classifications);
         textClassifications.setLayoutParams(params);
-//        textClassifications.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//
-//                clickedImageFilePath = imagePath;
-//                updateState(imageClicked);
-//            }
-//        });
+//        textClassifications.setBackgroundResource(R.drawable.outline);
+        textClassifications.setBackgroundColor(Color.GRAY);
+        textClassifications.setPadding(3, 3, 3, 3);
         return textClassifications;
     }
 }

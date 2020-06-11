@@ -17,6 +17,7 @@ public class ImageManager {
 
     public static void addClassifiedImage(String path, String classificationList){
         filePaths.add(path);
+//        imageClassifications.put(path, classificationList);
         try {
             File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
             File saveFile = new File(storageDir + imageFileName);
@@ -37,10 +38,12 @@ public class ImageManager {
         } catch (IOException e){
             e.printStackTrace();
         }
+        readInClassifiedImages();
     }
 
     public static void readInClassifiedImages(){
         filePaths.clear();
+        imageClassifications.clear();
         try {
             File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
             File saveFile = new File(storageDir + imageFileName);

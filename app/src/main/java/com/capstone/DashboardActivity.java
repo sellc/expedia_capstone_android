@@ -190,6 +190,7 @@ public class DashboardActivity extends AppCompatActivity {
         textClassifications.setLayoutParams(params);
         textClassifications.setBackgroundResource(R.drawable.outline_with_background);
         textClassifications.setPadding(15, 3, 15, 3);
+        textClassifications.requestLayout();
         return textClassifications;
     }
 }

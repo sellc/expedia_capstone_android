@@ -296,7 +296,7 @@ public class TakePictureActivity extends AppCompatActivity {
                 String className = classification.getClassName();
                 double probability = classification.getProbability() * 100;
                 sb.append(String.format("%s...... %.2f%%\n\n", className, probability));
-                if(probability > 50) {
+                if(probability > 0) {
                     classificationList += "," + className + "," + Math.round(probability);
                 }
             }
